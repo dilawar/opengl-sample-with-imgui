@@ -38,7 +38,7 @@ find_package(glfw3 REQUIRED)
 find_package(GLEW REQUIRED)
 
 add_executable(example_opengl
-    src/main.cpp
+    main.cpp
     ${imgui_RES_DIRS}/bindings/imgui_impl_opengl3.cpp
     ${imgui_RES_DIRS}/bindings/imgui_impl_glfw.cpp)
 

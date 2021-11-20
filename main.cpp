@@ -2,12 +2,12 @@
 #include <Windows.h>
 #endif
 
+#include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
 #include <GL/freeglut.h>
 #include <GLFW/glfw3.h>
-#include <imgui.h>
 
 #include <cmath>
 #include <cstdio>
@@ -115,10 +115,14 @@ int main(int, char**)
     if (!glfwInit())
         return 1;
 
+    const char* glsl_version = "#version 130";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+
     GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL2 3D example", NULL, NULL);
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1);
+    glfwSwapInterval(1); // Enable vsync
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -129,12 +133,12 @@ int main(int, char**)
 
     // Setup ImGui binding
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init(glsl_version);
 
     bool show_test_window = true;
     bool show_another_window = false;
 
-    glEnable(GL_DEPTH_TEST); // Depth Testing
+    glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glDisable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -143,6 +147,8 @@ int main(int, char**)
 
     // Main loop
     while (!glfwWindowShouldClose(window)) {
+
+        glfwPollEvents();
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -191,7 +197,6 @@ int main(int, char**)
         // Rendering
         int display_w, display_h;
         glfwGetWindowSize(window, &display_w, &display_h);
-        printf("w=%d, h=%d\n", display_w, display_h);
         glViewport(0, 0, display_w, display_h);
 
         /* Here we add some code to add the 3d world */
@@ -239,7 +244,8 @@ int main(int, char**)
 
         glfwGetFramebufferSize(window, &display_w, &display_h);
         glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w,
+            clear_color.z * clear_color.w, clear_color.w);
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
